@@ -23,23 +23,23 @@ url_encode() {
   printf '%s' "$_encoded"
 }
 
-# === Parse Options ===
+# === Parse Arguments ===
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --label) LABEL="$2"; shift 2 ;;
     --message) MESSAGE="$2"; shift 2 ;;
     --color) COLOR="$2"; shift 2 ;;
-    --label-color) LABEL_COLOR="$2"; shift 2 ;;
+    --label-color) LABEL_COLOR="${2:-$LABEL_COLOR}"; shift 2 ;;
     --logo) LOGO="$2"; shift 2 ;;
     --logo-color) LOGO_COLOR="$2"; shift 2 ;;
-    --style) STYLE="$2"; shift 2 ;;
-    --format) FORMAT="$2"; shift 2 ;;
+    --style) STYLE="${2:-$STYLE}"; shift 2 ;;
+    --format) FORMAT="${2:-$FORMAT}"; shift 2 ;;
     --base-url) BASE_URL="${2:-$BASE_URL}"; shift 2 ;;
     *) echo "::error::Invalid option $1"; exit 1 ;;
   esac
 done
 
-# === Validate Options ===
+# === Validate Arguments ===
 if [ -z "${LABEL:-}" ] || [ -z "${MESSAGE:-}" ] || [ -z "${COLOR:-}" ]; then
   echo "::error::Usage: $0 --label <label> --message <message> --color <color> [--label-color <label_color>] [--logo <logo>] [--logo-color <logo_color>] [--style <style>] [--format <format>] [--base-url <base_url>]"
   exit 1
