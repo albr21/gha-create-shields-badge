@@ -1,0 +1,103 @@
+name: gha-create-shields-badge
+
+description: |-
+  GitHub Action to create a badge using shields.io API
+
+author: albr21
+branding:
+  icon: award
+  color: purple
+
+inputs:
+  label:
+    description: Left-hand side text of the badge
+    required: true
+  message:
+    description: Right-hand side text of the badge
+    required: true
+  color:
+    description: |-
+      Background color of the right part (hex, rgb, rgba, hsl, hsla and css named colors supported)
+    required: true
+  label-color:
+    description: |-
+      Background color of the left part (hex, rgb, rgba, hsl, hsla and css named colors supported)
+    required: false
+    default: "555"
+  logo:
+    description: |-
+      Named logo from Simple Icons (e.g. github, docker, python).
+      See https://simpleicons.org/ for the full list.
+    required: false
+    default: ""
+  logo-color:
+    description: |-
+      Color for the logo (hex, rgb, rgba, hsl, hsla and css named colors supported)
+      Supported for simple-icons logos but not for custom logos
+    required: false
+    default: ""
+  style:
+    description: |-
+      Badge style (flat, flat-square, plastic, for-the-badge, social)
+      Default is "flat"
+    required: false
+    default: flat
+  format:
+    description: |-
+      Output format (svg, png, jpg, jpeg)
+      Default is "svg"
+    required: false
+    default: svg
+  base-url:
+    description: Base URL of the shields.io-compatible server
+    required: false
+    default: "https://img.shields.io"
+  command-line-interpreter:
+    description: Command line interpreter
+    required: false
+    default: bash
+
+outputs:
+  badge-path:
+    description: |-
+      Path to the badge file
+    value: ${{ steps.action-script.outputs.badge-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate Inputs
+      uses: albr21/gha-type-guard@1.0.0
+      with:
+        inputs_json: |
+          [
+            {"value": "${{ inputs.label }}", "type": "string"},
+            {"value": "${{ inputs.message }}", "type": "string"},
+            {"value": "${{ inputs.color }}", "type": "string"},
+            {"value": "${{ inputs.label-color }}", "type": "string"},
+            {"value": "${{ inputs.logo }}", "type": "string"},
+            {"value": "${{ inputs.logo-color }}", "type": "string"},
+            {"value": "${{ inputs.style }}", "type": "enum", "enumValues": ["flat", "flat-square", "plastic", "for-the-badge", "social"]},
+            {"value": "${{ inputs.format }}", "type": "enum", "enumValues": ["svg", "png", "jpg", "jpeg"]},
+            {"value": "${{ inputs.base-url }}", "type": "string"},
+            {"value": "${{ inputs.command-line-interpreter }}", "type": "enum", "enumValues": ["bash", "sh"]}
+          ]
+
+    - name: Set GITHUB_ACTION_PATH variable
+      run: echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV
+      shell: ${{ inputs.command-line-interpreter }}
+
+    - name: Create badge
+      id: action-script
+      run: |-
+        ${{ inputs.command-line-interpreter }} ${{ env.GITHUB_ACTION_PATH }}/scripts/main.sh \
+          --label "${{ inputs.label }}" \
+          --message "${{ inputs.message }}" \
+          --color "${{ inputs.color }}" \
+          --label-color "${{ inputs.label-color }}" \
+          --logo "${{ inputs.logo }}" \
+          --logo-color "${{ inputs.logo-color }}" \
+          --style "${{ inputs.style }}" \
+          --format "${{ inputs.format }}" \
+          --base-url "${{ inputs.base-url }}"
+      shell: ${{ inputs.command-line-interpreter }}
