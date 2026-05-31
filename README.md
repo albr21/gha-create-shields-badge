@@ -1,10 +1,24 @@
-# <project-name>
+# gha-create-shields-badge
 
-<!-- A brief description of the project. -->
+A GitHub Action to create a badge using [shields.io](https://shields.io) API.
 
 ## Usage
 
-<!-- Provide instructions on how to use the project, including code examples if applicable. -->
+```yaml
+steps:
+  - name: Create Shields Badge
+    uses: albr21/gha-create-shields-badge@1.0.0
+    with:
+      label: my-label
+      message: my-message
+      color: my-color
+      label-color: my-label-color
+      logo: my-logo
+      logo-color: my-logo-color
+      style: my-style
+      format: my-format
+      base-url: my-base-url
+```
 
 ## Contributing
 
